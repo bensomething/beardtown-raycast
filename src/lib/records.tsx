@@ -1,4 +1,4 @@
-import { Color, Detail, Grid, Icon, List } from "@raycast/api";
+import { Color, Detail, Grid, List } from "@raycast/api";
 import { API_HOST, FAILED_STATUS_ICON, RESOURCE_CONFIG, SUCCEEDED_STATUS_ICON } from "../config";
 import type { ApiRecord, ChallengeEntry, ChallengeFilter, RelationItem } from "../types";
 import {
@@ -26,7 +26,12 @@ export function getFirstRecord(payload: unknown): ApiRecord | null {
     return obj.data;
   }
 
-  if (typeof obj.title === "string" || typeof obj.slug === "string" || typeof obj.url === "string" || isRecord(obj.fields)) {
+  if (
+    typeof obj.title === "string" ||
+    typeof obj.slug === "string" ||
+    typeof obj.url === "string" ||
+    isRecord(obj.fields)
+  ) {
     return obj;
   }
 
@@ -87,7 +92,11 @@ export function getRecords(payload: unknown): ApiRecord[] {
 export function toChallengeEntries(records: ApiRecord[], filter: ChallengeFilter, startIndex = 0): ChallengeEntry[] {
   const entries = records.map((record, index) => {
     const item = unwrapRecord(record);
-    const title = getDisplayValue(item, ["title", "name", "challenge_name", "slug"], `Challenge ${startIndex + index + 1}`);
+    const title = getDisplayValue(
+      item,
+      ["title", "name", "challenge_name", "slug"],
+      `Challenge ${startIndex + index + 1}`,
+    );
     const id = getDisplayValue(item, ["id", "uuid"], "") || buildSyntheticId(item, startIndex + index);
     const subtitle = filter === "challenges" ? getChallengeSubtitle(item) : getNonChallengeSubtitle(record, item);
     const thumbnailUrl = getImageUrl(record, item, filter);
@@ -114,7 +123,11 @@ export function toTShirtEntries(records: ApiRecord[], startIndex = 0): Challenge
     }
 
     const challengeId = getDisplayValue(item, ["id", "challengeId", "challenge_id"], "");
-    const title = getDisplayValue(item, ["title", "challengeName", "challenge_name"], `T-Shirt ${startIndex + index + 1}`);
+    const title = getDisplayValue(
+      item,
+      ["title", "challengeName", "challenge_name"],
+      `T-Shirt ${startIndex + index + 1}`,
+    );
     const locationName = getDisplayValue(item, ["locationName", "location_name"], "");
     const videoReleased = getDisplayValue(item, ["videoReleased"], "");
     const challengeRecord: ApiRecord = {
@@ -213,7 +226,7 @@ export function parsePageSize(value: unknown): number | null {
   return Number.isInteger(numeric) && numeric > 0 ? numeric : null;
 }
 
-export function getNextPage(payload: unknown, currentPage: number): number | null {
+export function getNextPage(payload: unknown): number | null {
   const root = asObject(payload);
   const meta = asObject(root?.meta);
   const pagination = asObject(meta?.pagination);
@@ -307,7 +320,11 @@ export function getChallengeSubtitle(record: ApiRecord): string {
     return locationTitle;
   }
 
-  return getDisplayValue(record, ["locationName", "location_name", "venue", "venueName", "venue_name", "restaurant", "place"], "");
+  return getDisplayValue(
+    record,
+    ["locationName", "location_name", "venue", "venueName", "venue_name", "restaurant", "place"],
+    "",
+  );
 }
 
 export function getNonChallengeSubtitle(rawRecord: ApiRecord, normalizedRecord: ApiRecord): string {
@@ -409,7 +426,13 @@ export function getLocationMapUrl(locationTitle: string) {
 
 export function getKeywords(record: ApiRecord, title: string): string[] {
   return Array.from(
-    new Set([title, getDisplayValue(record, ["slug"], ""), getDisplayValue(record, ["location", "venue", "food", "meal", "status"], "")].filter(Boolean)),
+    new Set(
+      [
+        title,
+        getDisplayValue(record, ["slug"], ""),
+        getDisplayValue(record, ["location", "venue", "food", "meal", "status"], ""),
+      ].filter(Boolean),
+    ),
   );
 }
 
@@ -419,7 +442,9 @@ export function filterEntries(entries: ChallengeEntry[], searchText: string): Ch
     return entries;
   }
 
-  return entries.filter((entry) => [entry.title, entry.subtitle, ...entry.keywords].filter(Boolean).join(" ").toLowerCase().includes(query));
+  return entries.filter((entry) =>
+    [entry.title, entry.subtitle, ...entry.keywords].filter(Boolean).join(" ").toLowerCase().includes(query),
+  );
 }
 
 export function getImageUrl(rawRecord: ApiRecord, normalizedRecord: ApiRecord, filter: ChallengeFilter): string {
@@ -429,7 +454,8 @@ export function getImageUrl(rawRecord: ApiRecord, normalizedRecord: ApiRecord, f
   }
 
   if (filter !== "challenges") {
-    const latestVideoThumbnailUrl = getLatestVideoThumbnailUrl(rawRecord) || getLatestVideoThumbnailUrl(normalizedRecord);
+    const latestVideoThumbnailUrl =
+      getLatestVideoThumbnailUrl(rawRecord) || getLatestVideoThumbnailUrl(normalizedRecord);
     if (latestVideoThumbnailUrl) {
       return latestVideoThumbnailUrl;
     }
@@ -480,7 +506,9 @@ export function getLatestRelatedChallengeTooltip(record: ApiRecord): string {
   }
 
   const locationName =
-    getDisplayValue(latest, ["locationName"], "") || getDisplayValue(asObject(latest.fields) ?? {}, ["locationName"], "") || getLocationTitle(latest);
+    getDisplayValue(latest, ["locationName"], "") ||
+    getDisplayValue(asObject(latest.fields) ?? {}, ["locationName"], "") ||
+    getLocationTitle(latest);
 
   return locationName ? `Latest: ${title} Challenge at ${locationName}` : `Latest: ${title} Challenge`;
 }
@@ -491,7 +519,10 @@ export function getLatestRelatedChallenge(record: ApiRecord): ApiRecord | null {
   const candidates = candidateSources
     .flatMap((value) => normalizeRelationRecords(value))
     .map(unwrapRecord)
-    .filter((value, index, array) => array.findIndex((item) => getDedupKey(item, String(index)) === getDedupKey(value, String(index))) === index);
+    .filter(
+      (value, index, array) =>
+        array.findIndex((item) => getDedupKey(item, String(index)) === getDedupKey(value, String(index))) === index,
+    );
 
   const sortedCandidates = candidates
     .map((item, index) => ({ item, index, timestamp: getRecordTimestamp(item) }))
@@ -535,7 +566,10 @@ export function getLatestVideoThumbnailUrl(record: ApiRecord): string {
   const videos = candidateSources
     .flatMap((value) => normalizeRelationRecords(value))
     .map(unwrapRecord)
-    .filter((value, index, array) => array.findIndex((item) => getDedupKey(item, String(index)) === getDedupKey(value, String(index))) === index);
+    .filter(
+      (value, index, array) =>
+        array.findIndex((item) => getDedupKey(item, String(index)) === getDedupKey(value, String(index))) === index,
+    );
 
   const sortedVideos = videos
     .map((video, index) => ({ video, index, timestamp: getRecordTimestamp(video) }))
@@ -721,7 +755,9 @@ export function sortEntries(entries: ChallengeEntry[], filter: ChallengeFilter) 
   }
 
   if (filter === "guests") {
-    return [...entries].sort((left, right) => left.title.localeCompare(right.title, undefined, { sensitivity: "base" }));
+    return [...entries].sort((left, right) =>
+      left.title.localeCompare(right.title, undefined, { sensitivity: "base" }),
+    );
   }
 
   return [...entries].sort((left, right) => getChallengeCount(right.record) - getChallengeCount(left.record));
@@ -839,7 +875,9 @@ export function getDetailTitle(record: ApiRecord, fallbackTitle: string): string
 
 export function buildDetailMetadata(record: ApiRecord, onOpenRelation: (item: RelationItem) => void) {
   const locationTitle = getLocationTitle(record);
-  const dateValue = formatLongDate(getChallengeFieldValue(record, ["videoReleased", "date", "challenge_date", "event_date", "postDate"], ""));
+  const dateValue = formatLongDate(
+    getChallengeFieldValue(record, ["videoReleased", "date", "challenge_date", "event_date", "postDate"], ""),
+  );
   const statusValue = formatStatusValue(getChallengeFieldValue(record, ["status", "result", "challengeStatus"], ""));
   const urlValue = getDisplayValue(record, ["url"], "");
   const priceValue = getPriceLabel(record);
@@ -880,7 +918,11 @@ export function buildDetailMetadata(record: ApiRecord, onOpenRelation: (item: Re
       {joinedByItems.length > 0 ? (
         <Detail.Metadata.TagList title="Joined By">
           {joinedByItems.map((item) => (
-            <Detail.Metadata.TagList.Item key={`joined-by-${item.title}`} text={item.title} onAction={() => onOpenRelation(item)} />
+            <Detail.Metadata.TagList.Item
+              key={`joined-by-${item.title}`}
+              text={item.title}
+              onAction={() => onOpenRelation(item)}
+            />
           ))}
         </Detail.Metadata.TagList>
       ) : null}
@@ -902,21 +944,33 @@ export function buildDetailMetadata(record: ApiRecord, onOpenRelation: (item: Re
       {highlightItems.length > 0 ? (
         <Detail.Metadata.TagList title="Highlights">
           {highlightItems.map((item) => (
-            <Detail.Metadata.TagList.Item key={`highlight-${item.title}`} text={item.title} onAction={() => onOpenRelation(item)} />
+            <Detail.Metadata.TagList.Item
+              key={`highlight-${item.title}`}
+              text={item.title}
+              onAction={() => onOpenRelation(item)}
+            />
           ))}
         </Detail.Metadata.TagList>
       ) : null}
       {consumedItems.length > 0 ? (
         <Detail.Metadata.TagList title="Consumed">
           {consumedItems.map((item) => (
-            <Detail.Metadata.TagList.Item key={`consumed-${item.title}`} text={item.title} onAction={() => onOpenRelation(item)} />
+            <Detail.Metadata.TagList.Item
+              key={`consumed-${item.title}`}
+              text={item.title}
+              onAction={() => onOpenRelation(item)}
+            />
           ))}
         </Detail.Metadata.TagList>
       ) : null}
       {prizeItems.length > 0 ? (
         <Detail.Metadata.TagList title="Prizes">
           {prizeItems.map((item) => (
-            <Detail.Metadata.TagList.Item key={`prize-${item.title}`} text={item.title} onAction={() => onOpenRelation(item)} />
+            <Detail.Metadata.TagList.Item
+              key={`prize-${item.title}`}
+              text={item.title}
+              onAction={() => onOpenRelation(item)}
+            />
           ))}
         </Detail.Metadata.TagList>
       ) : null}

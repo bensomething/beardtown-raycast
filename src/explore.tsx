@@ -56,7 +56,8 @@ export default function Command() {
         return;
       }
 
-      const normalized = selectedFilter === "tshirts" ? toTShirtEntries(page.records) : toChallengeEntries(page.records, selectedFilter);
+      const normalized =
+        selectedFilter === "tshirts" ? toTShirtEntries(page.records) : toChallengeEntries(page.records, selectedFilter);
       setEntries(normalized);
       setNextUrl(page.nextUrl);
       setNextPage(page.nextPage);
@@ -68,7 +69,8 @@ export default function Command() {
         return;
       }
 
-      const message = loadError instanceof Error ? loadError.message : `Failed to load ${selectedResource.title.toLowerCase()}`;
+      const message =
+        loadError instanceof Error ? loadError.message : `Failed to load ${selectedResource.title.toLowerCase()}`;
       setError(message);
     } finally {
       if (context === requestContextRef.current) {
@@ -122,7 +124,8 @@ export default function Command() {
         return;
       }
 
-      const message = loadError instanceof Error ? loadError.message : `Failed to load more ${selectedResource.title.toLowerCase()}`;
+      const message =
+        loadError instanceof Error ? loadError.message : `Failed to load more ${selectedResource.title.toLowerCase()}`;
       if (message.includes("status 404")) {
         setNextUrl(null);
         setNextPage(null);
@@ -165,7 +168,8 @@ export default function Command() {
           return;
         }
 
-        const message = loadError instanceof Error ? loadError.message : `Failed to search ${selectedResource.title.toLowerCase()}`;
+        const message =
+          loadError instanceof Error ? loadError.message : `Failed to search ${selectedResource.title.toLowerCase()}`;
         setError(message);
       } finally {
         if (context === requestContextRef.current) {
@@ -187,15 +191,18 @@ export default function Command() {
     setSelectedItemId(filteredEntries[0]?.id);
   }, [filteredEntries, selectedItemId]);
 
-  const dropdown = isGridView ? buildGridDropdown(selectedFilter, setSelectedFilter) : buildListDropdown(selectedFilter, setSelectedFilter);
-  const emptyView = !error && filteredEntries.length === 0
-    ? {
-        title: `No ${selectedResource.title} Found`,
-        description: hasSearchText
-          ? `No matches found in ${selectedResource.title}.`
-          : `The API returned an empty result for ${selectedResource.title.toLowerCase()}.`,
-      }
-    : null;
+  const dropdown = isGridView
+    ? buildGridDropdown(selectedFilter, setSelectedFilter)
+    : buildListDropdown(selectedFilter, setSelectedFilter);
+  const emptyView =
+    !error && filteredEntries.length === 0
+      ? {
+          title: `No ${selectedResource.title} Found`,
+          description: hasSearchText
+            ? `No matches found in ${selectedResource.title}.`
+            : `The API returned an empty result for ${selectedResource.title.toLowerCase()}.`,
+        }
+      : null;
 
   if (!isGridView) {
     return (
@@ -223,7 +230,9 @@ export default function Command() {
           />
         ) : null}
 
-        {emptyView ? <List.EmptyView title={emptyView.title} description={emptyView.description} icon={Icon.MagnifyingGlass} /> : null}
+        {emptyView ? (
+          <List.EmptyView title={emptyView.title} description={emptyView.description} icon={Icon.MagnifyingGlass} />
+        ) : null}
 
         {filteredEntries.map((entry) => (
           <List.Item
@@ -270,7 +279,9 @@ export default function Command() {
         />
       ) : null}
 
-      {emptyView ? <Grid.EmptyView title={emptyView.title} description={emptyView.description} icon={Icon.MagnifyingGlass} /> : null}
+      {emptyView ? (
+        <Grid.EmptyView title={emptyView.title} description={emptyView.description} icon={Icon.MagnifyingGlass} />
+      ) : null}
 
       {filteredEntries.map((entry) => (
         <Grid.Item
@@ -283,7 +294,9 @@ export default function Command() {
             entry.thumbnailUrl
               ? {
                   source: entry.thumbnailUrl,
-                  ...(isTShirtsView ? { tooltip: `${entry.title} Challenge${entry.subtitle ? ` at ${entry.subtitle}` : ""}` } : {}),
+                  ...(isTShirtsView
+                    ? { tooltip: `${entry.title} Challenge${entry.subtitle ? ` at ${entry.subtitle}` : ""}` }
+                    : {}),
                 }
               : Icon.Image
           }
@@ -297,7 +310,11 @@ export default function Command() {
 
 function buildListDropdown(selectedFilter: ChallengeFilter, setSelectedFilter: (value: ChallengeFilter) => void) {
   return (
-    <List.Dropdown tooltip="Filter Challenges" value={selectedFilter} onChange={(value) => setSelectedFilter(value as ChallengeFilter)}>
+    <List.Dropdown
+      tooltip="Filter Challenges"
+      value={selectedFilter}
+      onChange={(value) => setSelectedFilter(value as ChallengeFilter)}
+    >
       <List.Dropdown.Section>
         {(["challenges", "highlights", "consumed", "prizes", "guests", "series"] as ChallengeFilter[]).map((value) => {
           const resource = RESOURCE_CONFIG[value];
@@ -313,7 +330,11 @@ function buildListDropdown(selectedFilter: ChallengeFilter, setSelectedFilter: (
 
 function buildGridDropdown(selectedFilter: ChallengeFilter, setSelectedFilter: (value: ChallengeFilter) => void) {
   return (
-    <Grid.Dropdown tooltip="Filter Challenges" value={selectedFilter} onChange={(value) => setSelectedFilter(value as ChallengeFilter)}>
+    <Grid.Dropdown
+      tooltip="Filter Challenges"
+      value={selectedFilter}
+      onChange={(value) => setSelectedFilter(value as ChallengeFilter)}
+    >
       <Grid.Dropdown.Section>
         {(["challenges", "highlights", "consumed", "prizes", "guests", "series"] as ChallengeFilter[]).map((value) => {
           const resource = RESOURCE_CONFIG[value];

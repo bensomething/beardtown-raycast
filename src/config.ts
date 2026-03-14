@@ -11,7 +11,10 @@ export const CHALLENGES_ACTION_ICON: Image.ImageLike = {
   source: `${ASSETS_DIR}/challenges.svg`,
   tintColor: Color.SecondaryText,
 };
-export const DETAILS_ACTION_ICON: Image.ImageLike = { source: `${ASSETS_DIR}/details.svg`, tintColor: Color.SecondaryText };
+export const DETAILS_ACTION_ICON: Image.ImageLike = {
+  source: `${ASSETS_DIR}/details.svg`,
+  tintColor: Color.SecondaryText,
+};
 export const GLOBE_ACTION_ICON: Image.ImageLike = { source: `${ASSETS_DIR}/globe.svg`, tintColor: Color.SecondaryText };
 export const MAP_ACTION_ICON: Image.ImageLike = { source: `${ASSETS_DIR}/map.svg`, tintColor: Color.SecondaryText };
 export const PLAY_ACTION_ICON: Image.ImageLike = { source: `${ASSETS_DIR}/play.svg`, tintColor: Color.SecondaryText };

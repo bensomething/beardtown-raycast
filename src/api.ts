@@ -65,7 +65,10 @@ function writeCachedJson(url: string, value: unknown): void {
   }
 }
 
-export async function fetchPaginatedChallenges(filter: ChallengeFilter, options: { page?: number; url?: string }): Promise<PagedResult> {
+export async function fetchPaginatedChallenges(
+  filter: ChallengeFilter,
+  options: { page?: number; url?: string },
+): Promise<PagedResult> {
   const pageUrl = new URL(options.url ?? getResourceUrl(filter));
 
   if (!options.url) {
@@ -75,13 +78,12 @@ export async function fetchPaginatedChallenges(filter: ChallengeFilter, options:
 
   const payload = await requestJson(pageUrl.toString());
   const records = getRecords(payload);
-  const currentPage = parsePageNumber(pageUrl.searchParams.get("page")) ?? options.page ?? 1;
   const nextUrl = getNextPageUrl(payload, pageUrl.toString());
 
   return {
     records,
     nextUrl,
-    nextPage: nextUrl ? parsePageNumber(nextUrl) : getNextPage(payload, currentPage),
+    nextPage: nextUrl ? parsePageNumber(nextUrl) : getNextPage(payload),
     pageSize: getPerPage(payload) ?? DEFAULT_PAGE_SIZE,
   };
 }
@@ -93,8 +95,14 @@ export async function fetchAllEntriesForFilter(filter: ChallengeFilter): Promise
   const allEntries: ChallengeEntry[] = [];
 
   while (nextUrl) {
-    const result = await fetchPaginatedChallenges(filter, nextUrl === getResourceUrl(filter) ? { page } : { url: nextUrl });
-    const pageEntries = filter === "tshirts" ? toTShirtEntries(result.records, startIndex) : toChallengeEntries(result.records, filter, startIndex);
+    const result = await fetchPaginatedChallenges(
+      filter,
+      nextUrl === getResourceUrl(filter) ? { page } : { url: nextUrl },
+    );
+    const pageEntries =
+      filter === "tshirts"
+        ? toTShirtEntries(result.records, startIndex)
+        : toChallengeEntries(result.records, filter, startIndex);
     allEntries.push(...pageEntries);
 
     if (!result.nextUrl && !result.nextPage) {

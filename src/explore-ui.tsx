@@ -1,6 +1,13 @@
 import { Action, ActionPanel, Detail, Grid, Icon, open, useNavigation } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CHALLENGES_ACTION_ICON, DETAILS_ACTION_ICON, GLOBE_ACTION_ICON, MAP_ACTION_ICON, PLAY_ACTION_ICON, RESOURCE_CONFIG } from "./config";
+import {
+  CHALLENGES_ACTION_ICON,
+  DETAILS_ACTION_ICON,
+  GLOBE_ACTION_ICON,
+  MAP_ACTION_ICON,
+  PLAY_ACTION_ICON,
+  RESOURCE_CONFIG,
+} from "./config";
 import { fetchAllEntriesForFilter, hydrateChallengeRecords, openChallengeYouTube, requestJson } from "./api";
 import type { ApiRecord, ChallengeEntry, ChallengeFilter, RelationItem } from "./types";
 import {
@@ -84,7 +91,11 @@ export function ChallengeDetail({ entry }: { entry: ChallengeEntry }) {
       actions={
         <ActionPanel>
           {getRecordUrl(resolvedRecord) ? (
-            <Action.OpenInBrowser title="Open in Beardtown" url={getRecordUrl(resolvedRecord)!} icon={GLOBE_ACTION_ICON} />
+            <Action.OpenInBrowser
+              title="Open in Beardtown"
+              url={getRecordUrl(resolvedRecord)!}
+              icon={GLOBE_ACTION_ICON}
+            />
           ) : null}
           {canWatchOnYouTube(resolvedRecord) ? (
             <Action
@@ -122,11 +133,21 @@ export function entryActions(
         <Action.Push
           title="View Related Challenges"
           icon={CHALLENGES_ACTION_ICON}
-          target={<RelatedChallengesGrid sourceEntries={sectionEntries} initialEntryId={entry.id} parentFilter={selectedFilter} />}
+          target={
+            <RelatedChallengesGrid
+              sourceEntries={sectionEntries}
+              initialEntryId={entry.id}
+              parentFilter={selectedFilter}
+            />
+          }
         />
       ) : null}
       {isChallenge ? (
-        <Action.Push title="View Challenge Details" target={<ChallengeDetail entry={entry} />} icon={DETAILS_ACTION_ICON} />
+        <Action.Push
+          title="View Challenge Details"
+          target={<ChallengeDetail entry={entry} />}
+          icon={DETAILS_ACTION_ICON}
+        />
       ) : null}
       {getRecordUrl(entry.record) ? (
         <Action.OpenInBrowser title="Open in Beardtown" url={getRecordUrl(entry.record)!} icon={GLOBE_ACTION_ICON} />
@@ -155,7 +176,11 @@ export function tShirtEntryActions(entry: ChallengeEntry) {
   return (
     <ActionPanel>
       <Action.Push title="Open T-Shirt" target={<TShirtDetail entry={entry} />} icon={DETAILS_ACTION_ICON} />
-      <Action.Push title="View Challenge Details" target={<ChallengeDetail entry={entry} />} icon={CHALLENGES_ACTION_ICON} />
+      <Action.Push
+        title="View Challenge Details"
+        target={<ChallengeDetail entry={entry} />}
+        icon={CHALLENGES_ACTION_ICON}
+      />
     </ActionPanel>
   );
 }
@@ -166,7 +191,11 @@ export function TShirtDetail({ entry }: { entry: ChallengeEntry }) {
       markdown={entry.thumbnailUrl ? `![${entry.title}](${entry.thumbnailUrl})` : `# ${entry.title}`}
       actions={
         <ActionPanel>
-          <Action.Push title="View Challenge Details" target={<ChallengeDetail entry={entry} />} icon={CHALLENGES_ACTION_ICON} />
+          <Action.Push
+            title="View Challenge Details"
+            target={<ChallengeDetail entry={entry} />}
+            icon={CHALLENGES_ACTION_ICON}
+          />
         </ActionPanel>
       }
     />
@@ -237,7 +266,11 @@ export function RelatedChallengesGrid({
       inset={Grid.Inset.Zero}
       searchBarPlaceholder={`Search ${selectedEntry?.title ?? RESOURCE_CONFIG[parentFilter].title} Challenges`}
       searchBarAccessory={
-        <Grid.Dropdown tooltip={RESOURCE_CONFIG[parentFilter].title} value={selectedEntry?.id} onChange={setSelectedEntryId}>
+        <Grid.Dropdown
+          tooltip={RESOURCE_CONFIG[parentFilter].title}
+          value={selectedEntry?.id}
+          onChange={setSelectedEntryId}
+        >
           {sourceEntries.map((entry) => (
             <Grid.Dropdown.Item key={entry.id} title={entry.title} value={entry.id} />
           ))}
