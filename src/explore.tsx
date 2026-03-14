@@ -349,11 +349,7 @@ export default function Command() {
         {!error && filteredEntries.length === 0 ? (
           <List.EmptyView
             title={`No ${selectedResource.title} Found`}
-            description={
-              hasSearchText
-                ? `No matches found in ${selectedResource.title}.`
-                : `The API returned an empty result for ${selectedResource.title.toLowerCase()}.`
-            }
+            description={hasSearchText ? `No matches found in ${selectedResource.title}.` : `No matches found.`}
             icon={Icon.MagnifyingGlass}
           />
         ) : null}
@@ -432,11 +428,7 @@ export default function Command() {
       {!error && filteredEntries.length === 0 ? (
         <Grid.EmptyView
           title={`No ${selectedResource.title} Found`}
-          description={
-            hasSearchText
-              ? `No matches found in ${selectedResource.title}.`
-              : `The API returned an empty result for ${selectedResource.title.toLowerCase()}.`
-          }
+          description={hasSearchText ? `No matches found in ${selectedResource.title}.` : `No matches found.`}
           icon={Icon.MagnifyingGlass}
         />
       ) : null}
@@ -841,26 +833,26 @@ async function requestJson(url: string, allowInsecureTls: boolean): Promise<unkn
         },
       },
       (res) => {
-      const { statusCode = 0 } = res;
-      const chunks: Buffer[] = [];
+        const { statusCode = 0 } = res;
+        const chunks: Buffer[] = [];
 
-      res.on("data", (chunk: Buffer) => chunks.push(chunk));
-      res.on("end", () => {
-        const body = Buffer.concat(chunks).toString("utf8");
+        res.on("data", (chunk: Buffer) => chunks.push(chunk));
+        res.on("end", () => {
+          const body = Buffer.concat(chunks).toString("utf8");
 
-        if (statusCode < 200 || statusCode >= 300) {
-          reject(new Error(`Request failed with status ${statusCode}`));
-          return;
-        }
+          if (statusCode < 200 || statusCode >= 300) {
+            reject(new Error(`Request failed with status ${statusCode}`));
+            return;
+          }
 
-        try {
-          const parsed = JSON.parse(body);
-          writeCachedJson(url, parsed);
-          resolve(parsed);
-        } catch (error) {
-          reject(new Error(`Invalid JSON response: ${String(error)}`));
-        }
-      });
+          try {
+            const parsed = JSON.parse(body);
+            writeCachedJson(url, parsed);
+            resolve(parsed);
+          } catch (error) {
+            reject(new Error(`Invalid JSON response: ${String(error)}`));
+          }
+        });
       },
     );
 
