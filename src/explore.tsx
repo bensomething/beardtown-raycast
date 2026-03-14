@@ -1,12 +1,31 @@
-import { Action, ActionPanel, Cache, Color, Detail, Grid, Icon, Image, List, environment, open, showToast, Toast, useNavigation } from "@raycast/api";
+import {
+  Action,
+  ActionPanel,
+  Cache,
+  Color,
+  Detail,
+  Grid,
+  Icon,
+  Image,
+  List,
+  environment,
+  open,
+  showToast,
+  Toast,
+  useNavigation,
+} from "@raycast/api";
 import https from "node:https";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-const API_HOST = environment.isDevelopment ? "https://beard.test" : "https://beard.town";
+const API_HOST = "https://beard.town";
+const API_TOKEN = "D5A19F84-636A-476D-8C63-94A7C212E3F7";
 const DEFAULT_PAGE_SIZE = 50;
 const RESPONSE_CACHE_TTL_MS = 10 * 60 * 1000;
 const ASSETS_DIR = environment.assetsPath;
-const CHALLENGES_ACTION_ICON: Image.ImageLike = { source: `${ASSETS_DIR}/challenges.svg`, tintColor: Color.SecondaryText };
+const CHALLENGES_ACTION_ICON: Image.ImageLike = {
+  source: `${ASSETS_DIR}/challenges.svg`,
+  tintColor: Color.SecondaryText,
+};
 const DETAILS_ACTION_ICON: Image.ImageLike = { source: `${ASSETS_DIR}/details.svg`, tintColor: Color.SecondaryText };
 const GLOBE_ACTION_ICON: Image.ImageLike = { source: `${ASSETS_DIR}/globe.svg`, tintColor: Color.SecondaryText };
 const MAP_ACTION_ICON: Image.ImageLike = { source: `${ASSETS_DIR}/map.svg`, tintColor: Color.SecondaryText };
@@ -42,10 +61,7 @@ type PagedResult = {
   pageSize: number;
 };
 
-const RESOURCE_CONFIG: Record<
-  ChallengeFilter,
-  { title: string; path: string; icon?: Image.ImageLike }
-> = {
+const RESOURCE_CONFIG: Record<ChallengeFilter, { title: string; path: string; icon?: Image.ImageLike }> = {
   challenges: {
     title: "Challenges",
     path: "/api/v1/challenges.json",
@@ -101,10 +117,7 @@ export default function Command() {
   const isTShirtsView = selectedFilter === "tshirts";
   const isGridView = selectedFilter === "challenges" || isTShirtsView;
   const hasSearchText = searchText.trim().length > 0;
-  const filteredEntries = useMemo(
-    () => filterEntries(entries, searchText),
-    [entries, searchText],
-  );
+  const filteredEntries = useMemo(() => filterEntries(entries, searchText), [entries, searchText]);
 
   const loadInitial = useCallback(async () => {
     const context = requestContextRef.current + 1;
@@ -154,7 +167,8 @@ export default function Command() {
         return;
       }
 
-      const message = loadError instanceof Error ? loadError.message : `Failed to load ${selectedResource.title.toLowerCase()}`;
+      const message =
+        loadError instanceof Error ? loadError.message : `Failed to load ${selectedResource.title.toLowerCase()}`;
       setError(message);
       await showToast({
         style: Toast.Style.Failure,
@@ -291,15 +305,25 @@ export default function Command() {
         searchText={searchText}
         onSearchTextChange={setSearchText}
         searchBarAccessory={
-          <List.Dropdown tooltip="Filter Challenges" value={selectedFilter} onChange={(value) => setSelectedFilter(value as ChallengeFilter)}>
+          <List.Dropdown
+            tooltip="Filter Challenges"
+            value={selectedFilter}
+            onChange={(value) => setSelectedFilter(value as ChallengeFilter)}
+          >
             <List.Dropdown.Section>
-              {(["challenges", "highlights", "consumed", "prizes", "guests", "series"] as ChallengeFilter[]).map((value) => {
-                const resource = RESOURCE_CONFIG[value];
-                return <List.Dropdown.Item key={value} title={resource.title} value={value} icon={resource.icon} />;
-              })}
+              {(["challenges", "highlights", "consumed", "prizes", "guests", "series"] as ChallengeFilter[]).map(
+                (value) => {
+                  const resource = RESOURCE_CONFIG[value];
+                  return <List.Dropdown.Item key={value} title={resource.title} value={value} icon={resource.icon} />;
+                },
+              )}
             </List.Dropdown.Section>
             <List.Dropdown.Section>
-              <List.Dropdown.Item title={RESOURCE_CONFIG.tshirts.title} value="tshirts" icon={RESOURCE_CONFIG.tshirts.icon} />
+              <List.Dropdown.Item
+                title={RESOURCE_CONFIG.tshirts.title}
+                value="tshirts"
+                icon={RESOURCE_CONFIG.tshirts.icon}
+              />
             </List.Dropdown.Section>
           </List.Dropdown>
         }
@@ -364,15 +388,25 @@ export default function Command() {
       searchText={searchText}
       onSearchTextChange={setSearchText}
       searchBarAccessory={
-        <Grid.Dropdown tooltip="Filter Challenges" value={selectedFilter} onChange={(value) => setSelectedFilter(value as ChallengeFilter)}>
+        <Grid.Dropdown
+          tooltip="Filter Challenges"
+          value={selectedFilter}
+          onChange={(value) => setSelectedFilter(value as ChallengeFilter)}
+        >
           <Grid.Dropdown.Section>
-            {(["challenges", "highlights", "consumed", "prizes", "guests", "series"] as ChallengeFilter[]).map((value) => {
-              const resource = RESOURCE_CONFIG[value];
-              return <Grid.Dropdown.Item key={value} title={resource.title} value={value} icon={resource.icon} />;
-            })}
+            {(["challenges", "highlights", "consumed", "prizes", "guests", "series"] as ChallengeFilter[]).map(
+              (value) => {
+                const resource = RESOURCE_CONFIG[value];
+                return <Grid.Dropdown.Item key={value} title={resource.title} value={value} icon={resource.icon} />;
+              },
+            )}
           </Grid.Dropdown.Section>
           <Grid.Dropdown.Section>
-            <Grid.Dropdown.Item title={RESOURCE_CONFIG.tshirts.title} value="tshirts" icon={RESOURCE_CONFIG.tshirts.icon} />
+            <Grid.Dropdown.Item
+              title={RESOURCE_CONFIG.tshirts.title}
+              value="tshirts"
+              icon={RESOURCE_CONFIG.tshirts.icon}
+            />
           </Grid.Dropdown.Section>
         </Grid.Dropdown>
       }
@@ -504,7 +538,11 @@ function ChallengeDetail({ entry }: { entry: ChallengeEntry }) {
       actions={
         <ActionPanel>
           {getRecordUrl(resolvedRecord) ? (
-            <Action.OpenInBrowser title="Open in Beardtown" url={getRecordUrl(resolvedRecord)!} icon={GLOBE_ACTION_ICON} />
+            <Action.OpenInBrowser
+              title="Open in Beardtown"
+              url={getRecordUrl(resolvedRecord)!}
+              icon={GLOBE_ACTION_ICON}
+            />
           ) : null}
           {canWatchOnYouTube(resolvedRecord) ? (
             <Action
@@ -542,11 +580,21 @@ function entryActions(
         <Action.Push
           title="View Related Challenges"
           icon={CHALLENGES_ACTION_ICON}
-          target={<RelatedChallengesGrid sourceEntries={sectionEntries} initialEntryId={entry.id} parentFilter={selectedFilter} />}
+          target={
+            <RelatedChallengesGrid
+              sourceEntries={sectionEntries}
+              initialEntryId={entry.id}
+              parentFilter={selectedFilter}
+            />
+          }
         />
       ) : null}
       {isChallenge ? (
-        <Action.Push title="View Challenge Details" target={<ChallengeDetail entry={entry} />} icon={DETAILS_ACTION_ICON} />
+        <Action.Push
+          title="View Challenge Details"
+          target={<ChallengeDetail entry={entry} />}
+          icon={DETAILS_ACTION_ICON}
+        />
       ) : null}
       {getRecordUrl(entry.record) ? (
         <Action.OpenInBrowser title="Open in Beardtown" url={getRecordUrl(entry.record)!} icon={GLOBE_ACTION_ICON} />
@@ -575,7 +623,11 @@ function tShirtEntryActions(entry: ChallengeEntry) {
   return (
     <ActionPanel>
       <Action.Push title="Open T-Shirt" target={<TShirtDetail entry={entry} />} icon={DETAILS_ACTION_ICON} />
-      <Action.Push title="View Challenge Details" target={<ChallengeDetail entry={entry} />} icon={CHALLENGES_ACTION_ICON} />
+      <Action.Push
+        title="View Challenge Details"
+        target={<ChallengeDetail entry={entry} />}
+        icon={CHALLENGES_ACTION_ICON}
+      />
     </ActionPanel>
   );
 }
@@ -586,7 +638,11 @@ function TShirtDetail({ entry }: { entry: ChallengeEntry }) {
       markdown={entry.thumbnailUrl ? `![${entry.title}](${entry.thumbnailUrl})` : `# ${entry.title}`}
       actions={
         <ActionPanel>
-          <Action.Push title="View Challenge Details" target={<ChallengeDetail entry={entry} />} icon={CHALLENGES_ACTION_ICON} />
+          <Action.Push
+            title="View Challenge Details"
+            target={<ChallengeDetail entry={entry} />}
+            icon={CHALLENGES_ACTION_ICON}
+          />
         </ActionPanel>
       }
     />
@@ -657,7 +713,11 @@ function RelatedChallengesGrid({
       inset={Grid.Inset.Zero}
       searchBarPlaceholder={`Search ${selectedEntry?.title ?? RESOURCE_CONFIG[parentFilter].title} Challenges`}
       searchBarAccessory={
-        <Grid.Dropdown tooltip={RESOURCE_CONFIG[parentFilter].title} value={selectedEntry?.id} onChange={setSelectedEntryId}>
+        <Grid.Dropdown
+          tooltip={RESOURCE_CONFIG[parentFilter].title}
+          value={selectedEntry?.id}
+          onChange={setSelectedEntryId}
+        >
           {sourceEntries.map((entry) => (
             <Grid.Dropdown.Item key={entry.id} title={entry.title} value={entry.id} />
           ))}
@@ -772,7 +832,15 @@ async function requestJson(url: string, allowInsecureTls: boolean): Promise<unkn
   }
 
   return await new Promise((resolve, reject) => {
-    const req = https.get(url, { rejectUnauthorized: !allowInsecureTls }, (res) => {
+    const req = https.get(
+      url,
+      {
+        rejectUnauthorized: !allowInsecureTls,
+        headers: {
+          "X-API-Token": API_TOKEN,
+        },
+      },
+      (res) => {
       const { statusCode = 0 } = res;
       const chunks: Buffer[] = [];
 
@@ -793,7 +861,8 @@ async function requestJson(url: string, allowInsecureTls: boolean): Promise<unkn
           reject(new Error(`Invalid JSON response: ${String(error)}`));
         }
       });
-    });
+      },
+    );
 
     req.on("error", reject);
   });
@@ -825,7 +894,10 @@ function writeCachedJson(url: string, value: unknown): void {
   }
 }
 
-async function fetchPaginatedChallenges(filter: ChallengeFilter, options: { page?: number; url?: string }): Promise<PagedResult> {
+async function fetchPaginatedChallenges(
+  filter: ChallengeFilter,
+  options: { page?: number; url?: string },
+): Promise<PagedResult> {
   const pageUrl = new URL(options.url ?? getResourceUrl(filter));
 
   if (!options.url) {
@@ -854,9 +926,14 @@ async function fetchAllEntriesForFilter(filter: ChallengeFilter): Promise<Challe
   const allEntries: ChallengeEntry[] = [];
 
   while (nextUrl) {
-    const result = await fetchPaginatedChallenges(filter, nextUrl === getResourceUrl(filter) ? { page } : { url: nextUrl });
+    const result = await fetchPaginatedChallenges(
+      filter,
+      nextUrl === getResourceUrl(filter) ? { page } : { url: nextUrl },
+    );
     const pageEntries =
-      filter === "tshirts" ? toTShirtEntries(result.records, startIndex) : toChallengeEntries(result.records, filter, startIndex);
+      filter === "tshirts"
+        ? toTShirtEntries(result.records, startIndex)
+        : toChallengeEntries(result.records, filter, startIndex);
     allEntries.push(...pageEntries);
 
     if (!result.nextUrl && !result.nextPage) {
@@ -1048,12 +1125,18 @@ function toTShirtEntries(records: ApiRecord[], startIndex = 0): ChallengeEntry[]
     }
 
     const challengeId = getDisplayValue(item, ["id", "challengeId", "challenge_id"], "");
-    const title = getDisplayValue(item, ["title", "challengeName", "challenge_name"], `T-Shirt ${startIndex + index + 1}`);
+    const title = getDisplayValue(
+      item,
+      ["title", "challengeName", "challenge_name"],
+      `T-Shirt ${startIndex + index + 1}`,
+    );
     const locationName = getDisplayValue(item, ["locationName", "location_name"], "");
+    const videoReleased = getDisplayValue(item, ["videoReleased"], "");
     const challengeRecord: ApiRecord = {
       id: challengeId || getDisplayValue(item, ["id", "uuid"], ""),
       title,
       locationName,
+      ...(videoReleased ? { videoReleased } : {}),
       section: "challenges",
       jsonUrl: challengeId ? `${API_HOST}/api/v1/challenges/${challengeId}.json` : "",
     };
@@ -1240,17 +1323,6 @@ function getDisplayValue(record: ApiRecord, keys: string[], fallback = ""): stri
   }
 
   return fallback;
-}
-
-function formatSubtitle(record: ApiRecord): string {
-  const parts = [
-    getDisplayValue(record, ["food", "meal", "dish"], ""),
-    getDisplayValue(record, ["location", "venue", "place"], ""),
-    getDisplayValue(record, ["date", "challenge_date", "event_date"], ""),
-    getDisplayValue(record, ["status", "result"], ""),
-  ].filter(Boolean);
-
-  return parts.join(" • ");
 }
 
 function getLocationTitle(record: ApiRecord): string {
@@ -1657,7 +1729,8 @@ function getImageUrl(rawRecord: ApiRecord, normalizedRecord: ApiRecord, filter: 
   }
 
   if (filter !== "challenges") {
-    const latestVideoThumbnailUrl = getLatestVideoThumbnailUrl(rawRecord) || getLatestVideoThumbnailUrl(normalizedRecord);
+    const latestVideoThumbnailUrl =
+      getLatestVideoThumbnailUrl(rawRecord) || getLatestVideoThumbnailUrl(normalizedRecord);
     if (latestVideoThumbnailUrl) {
       return latestVideoThumbnailUrl;
     }
@@ -1721,7 +1794,10 @@ function getLatestRelatedChallenge(record: ApiRecord): ApiRecord | null {
   const candidates = candidateSources
     .flatMap((value) => normalizeRelationRecords(value))
     .map(unwrapRecord)
-    .filter((value, index, array) => array.findIndex((item) => getDedupKey(item, String(index)) === getDedupKey(value, String(index))) === index);
+    .filter(
+      (value, index, array) =>
+        array.findIndex((item) => getDedupKey(item, String(index)) === getDedupKey(value, String(index))) === index,
+    );
 
   const sortedCandidates = candidates
     .map((item, index) => ({ item, index, timestamp: getRecordTimestamp(item) }))
@@ -1765,7 +1841,10 @@ function getLatestVideoThumbnailUrl(record: ApiRecord): string {
   const videos = candidateSources
     .flatMap((value) => normalizeRelationRecords(value))
     .map(unwrapRecord)
-    .filter((value, index, array) => array.findIndex((item) => getDedupKey(item, String(index)) === getDedupKey(value, String(index))) === index);
+    .filter(
+      (value, index, array) =>
+        array.findIndex((item) => getDedupKey(item, String(index)) === getDedupKey(value, String(index))) === index,
+    );
 
   const sortedVideos = videos
     .map((video, index) => ({ video, index, timestamp: getRecordTimestamp(video) }))
@@ -1905,7 +1984,7 @@ function getNonChallengeAccessories(record: ApiRecord) {
   const failedCount = getNumericField(record, ["failedCount", "failed_count"]);
   const accessories = [];
 
-  if (succeededCount !== null) {
+  if (succeededCount !== null && succeededCount > 0) {
     accessories.push({
       text: { value: String(succeededCount), color: Color.Green },
       tooltip: "Succeeded challenges",
@@ -1956,11 +2035,24 @@ function sortEntries(entries: ChallengeEntry[], filter: ChallengeFilter) {
   }
 
   if (filter === "tshirts") {
-    return [...entries].sort((left, right) => left.title.localeCompare(right.title, undefined, { sensitivity: "base" }));
+    return [...entries].sort((left, right) => {
+      const leftTimestamp = getRecordTimestamp(left.record);
+      const rightTimestamp = getRecordTimestamp(right.record);
+
+      if (leftTimestamp !== null || rightTimestamp !== null) {
+        if (leftTimestamp === null) return 1;
+        if (rightTimestamp === null) return -1;
+        if (leftTimestamp !== rightTimestamp) return rightTimestamp - leftTimestamp;
+      }
+
+      return left.title.localeCompare(right.title, undefined, { sensitivity: "base" });
+    });
   }
 
   if (filter === "guests") {
-    return [...entries].sort((left, right) => left.title.localeCompare(right.title, undefined, { sensitivity: "base" }));
+    return [...entries].sort((left, right) =>
+      left.title.localeCompare(right.title, undefined, { sensitivity: "base" }),
+    );
   }
 
   return [...entries].sort((left, right) => getChallengeCount(right.record) - getChallengeCount(left.record));
