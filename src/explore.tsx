@@ -214,7 +214,7 @@ export default function Command() {
         searchBarPlaceholder={`Search ${selectedResource.title}`}
         searchText={searchText}
         onSearchTextChange={setSearchText}
-        searchBarAccessory={dropdown as typeof ListNamespace.Dropdown}
+        searchBarAccessory={dropdown}
         pagination={{ pageSize, hasMore, onLoadMore: loadMore }}
       >
         {error ? (
@@ -263,7 +263,7 @@ export default function Command() {
       searchBarPlaceholder={`Search ${selectedResource.title}`}
       searchText={searchText}
       onSearchTextChange={setSearchText}
-      searchBarAccessory={dropdown as typeof Grid.Dropdown}
+      searchBarAccessory={dropdown}
       pagination={{ pageSize, hasMore, onLoadMore: loadMore }}
     >
       {error ? (
