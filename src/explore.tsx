@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Grid, Icon, List, type List as ListNamespace } from "@raycast/api";
+import { Action, ActionPanel, Grid, Icon, List } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchAllEntriesForFilter, fetchPaginatedChallenges } from "./api";
 import { RESOURCE_CONFIG } from "./config";
