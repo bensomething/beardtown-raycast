@@ -198,9 +198,7 @@ export default function Command() {
     !error && filteredEntries.length === 0
       ? {
           title: `No ${selectedResource.title} Found`,
-          description: hasSearchText
-            ? `No matches found in ${selectedResource.title}.`
-            : `No matches found.`,
+          description: hasSearchText ? `No matches found in ${selectedResource.title}.` : `No matches found.`,
         }
       : null;
 
